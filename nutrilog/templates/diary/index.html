@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}My Diary{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="card">
+        <h2>Body mass index</h2>
+        <label>{{ bmi }} &mdash; <span class="{{ 'color-bmi-' + interpretation.lower() }}">{{ interpretation
+                }}</span></label>
+    </div>
+    <div class="card">
+        <h2>Calories intake in last 24 hours</h2>
+        <label>{{ calories_in_last_24_hours }} / {{ calories_goal }} kcal</label>
+        <div class="bar-wrapper">
+            <div class="bar bg-color-calories" style="width: 0"></div>
+        </div>
+        <a class="btn margin-left-0" href="{{ url_for('diary.add_food_intake') }}">Add food intake</a>
+    </div>
+    <div class="card">
+        <h2>Water intake in last 24 hours</h2>
+        <label>{{ water_intake_in_last_24_hours }} / {{ water_intake_goal }} L</label>
+        <div class="bar-wrapper">
+            <div class="bar bg-color-water" id="water-bar" style="width: 0"></div>
+            <script>
+                setTimeout(() => {
+                    document.getElementById("water-bar").style.width = "{{ water_intake_in_last_24_hours / water_intake_goal * 100 }}%"
+                }, 1)
+            </script>
+        </div>
+        <a class="btn margin-left-0" href="{{ url_for('diary.add_water_intake') }}">Add water intake</a>
+    </div>
+</div>
+{% endblock %}

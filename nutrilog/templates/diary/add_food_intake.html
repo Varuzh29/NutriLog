@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Food Intake{% endblock %}
+
+{% block header %}
+<h2>Add food intake:</h2>
+{% endblock %}
+
+{% block content %}
+<input type="text" name="query" id="query" placeholder='Search for food item' required autofocus>
+<div id="food-items-container" class="display-flex flex-column" style="padding: 1rem">
+
+</div>
+<script>
+    const UPDATE_RATE = 500 // ms
+    let search_input = document.getElementById("query")
+    let food_items_container = document.getElementById("food-items-container")
+    let last_query = ""
+    let timer = null
+
+    search_input.addEventListener("keyup", function (event) {
+        if (search_input.value != last_query) {
+            clearTimeout(timer)
+            timer = setTimeout(async function () {
+                if (search_input.value == last_query) return
+                await search(search_input.value)
+                last_query = search_input.value
+            }, UPDATE_RATE)
+        }
+    })
+
+    async function search(query) {
+        if (query == "") return
+        let food_items = await find_food_item(query)
+        display_food_items(food_items)
+    }
+
+    async function find_food_item(query) {
+        let response = await fetch(`/find_food_item?q=${query}`)
+        let food_items = await response
+        return food_items.json()
+    }
+
+    function display_food_items(food_items) {
+        food_items_container.innerHTML = ""
+        for (let food_item of food_items) {
+            food_items_container.innerHTML += `
+                <div class="food-card">
+                    <div class="food-card-image">
+                        <img src="${food_item.image_url}">
+                        <h3>${food_item.name}</h3>
+                    </div>
+                    <div class="food-card-content">
+                        <table class="tbl">
+                            <tr>
+                                <td>Calories:</td>
+                                <td>${ food_item.kcal } kcal</td>
+                                <td rowspan="4">per 100g</td>
+                            </tr>
+                            <tr>
+                                <td>Carbs:</td>
+                                <td>${ food_item.carbohydrates } g</td>
+                            </tr>
+                            <tr>
+                                <td>Fat:</td>
+                                <td>${ food_item.fat } g</td>
+                            </tr>
+                            <tr>
+                                <td>Protein:</td>
+                                <td>${ food_item.protein } g</td>
+                            </tr>
+                        </table>
+                        <button class="btn" onclick="add_food_item(${food_item.id})">Add</button>
+                    </div>
+                </div>
+            `
+        }
+    }
+</script>
+{% endblock %}

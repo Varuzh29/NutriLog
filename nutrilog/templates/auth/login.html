@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Log In{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" class="display-flex flex-column">
+  <input name="username" id="username" placeholder="Username" required autofocus>
+  <input type="password" name="password" id="password" placeholder="Password" required autofocus>
+  <button class="btn" type="submit">Log In</button>
+</form>
+{% endblock %}

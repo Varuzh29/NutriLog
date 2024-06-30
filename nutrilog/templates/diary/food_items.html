@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Food Items{% endblock %}
+{% block header %}<h1>Enter food item information:</h1>{% endblock %}
+{% block content %}
+<form method="post" class="display-flex flex-column" enctype=multipart/form-data>
+    <table>
+        <tr>
+            <td><label for="name">Name:</label></td>
+            <td><input name="name" id="name" required autofocus placeholder="Apple"></td>
+        </tr>
+        <tr>
+            <td><label for="image">Image:</label></td>
+            <td><input type="file" name="image"></td>
+        </tr>
+        <tr>
+            <td><label for="calories">Calories:</label></td>
+            <td><input type="number" min="0" name="calories" required placeholder="51">kcal</td>
+            <td rowspan="4">per 100g</td>
+        </tr>
+        <tr>
+            <td><label for="carbs">Carbs:</label></td>
+            <td><input type="number" min="0" step="0.1" name="carbs" required placeholder="11.6">g</td>
+        </tr>
+        <tr>
+            <td><label for="fat">Fat:</label></td>
+            <td><input type="number" min="0" step="0.1" name="fat" required placeholder="0.5">g</td>
+        </tr>
+        <tr>
+            <td><label for="protein">Protein:</label></td>
+            <td><input type="number" min="0" step="0.1" name="protein" required placeholder="0.6">g</td>
+        </tr>
+    </table>
+    <button class="btn" type="submit">Add Food Item</button>
+</form>
+
+<h2>Food Items:</h2>
+{% for food_item in food_items %}
+<div class="food-card">
+    <div class="food-card-image">
+        <img src="{{ food_item.image_url or url_for('static', filename='icons/no_food_img.svg') }}">
+        <h3>{{ food_item.name.title() }}</h3>
+    </div>
+    <div class="food-card-content">
+        <table class="tbl">
+            <tr>
+                <td>Calories:</td>
+                <td>{{ food_item.kcal }} kcal</td>
+                <td rowspan="4">per 100g</td>
+            </tr>
+            <tr>
+                <td>Carbs:</td>
+                <td>{{ food_item.carbohydrates }} g</td>
+            </tr>
+            <tr>
+                <td>Fat:</td>
+                <td>{{ food_item.fat }} g</td>
+            </tr>
+            <tr>
+                <td>Protein:</td>
+                <td>{{ food_item.protein }} g</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

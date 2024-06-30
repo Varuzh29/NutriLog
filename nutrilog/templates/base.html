@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - NutriLog</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <nav>
+        <h1><a href="{{ url_for('index') }}">Nutri<span class="color-main-accent">Log</span></a></h1>
+        <ul>
+            {% if g.user %}
+            <li><span>Hello, {{ g.user['username'] }}</span>
+            <li><a href="{{ url_for('diary.measurements') }}">My Mesurements</a>
+            <li><a href="{{ url_for('diary.goals') }}">My Goals</a>
+            <li><a href="{{ url_for('diary.food_items') }}">Food Items</a>
+            <li><a href="{{ url_for('diary.settings') }}">Settings</a>
+            <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+                {% else %}
+            <li><a href="{{ url_for('auth.register') }}">Register</a>
+            <li><a href="{{ url_for('auth.login') }}">Log In</a>
+                {% endif %}
+        </ul>
+    </nav>
+</head>
+
+<body>
+    <section class="content">
+        <header>{% block header %}{% endblock %}</header>
+        {% for message in get_flashed_messages() %}
+        <div class="flash">
+            <img class="flash-icon" src="{{ url_for('static', filename='icons/error.svg') }}">{{ message }}
+        </div>
+        {% endfor %}
+        {% block content %}{% endblock %}
+    </section>
+    <div style="flex-grow: 1;"></div>
+    <footer>
+        <p>NutriLog by <a target="_blank" href="https://github.com/Varuzh29">Varuzhan
+                Shakhkulyan</a> &copy; 2024</p>
+    </footer>
+</body>
+
+</html>
