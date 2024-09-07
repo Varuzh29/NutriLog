@@ -35,12 +35,31 @@ def index():
 
     calories_goal = g.user['kcal_goal']
 
+    food_intake_in_last_24_hours = db.execute(
+        "SELECT food_item_id, portion_weight, portions FROM food_intake WHERE user_id = ? AND time >= datetime('now', '-24 hour')",
+        (g.user['id'],)
+    ).fetchall()
+
+    calories_in_last_24_hours = 0
+
+    for food_intake in food_intake_in_last_24_hours:
+        intake_weight = food_intake["portion_weight"] * food_intake["portions"]
+        food_item = db.execute(
+            "SELECT kcal FROM food_items WHERE id = ?",
+            (food_intake["food_item_id"],)
+        ).fetchall()[0]
+        intake_calories = (food_item["kcal"] / 100) * intake_weight
+        calories_in_last_24_hours += intake_calories
+
+    print(calories_in_last_24_hours)
+
     return render_template('diary/index.html',
                            bmi=bmi["index"],
                            interpretation=bmi["interpretation"],
                            water_intake_in_last_24_hours=water_intake_in_last_24_hours,
                            water_intake_goal=water_intake_goal,
-                           calories_goal=calories_goal)
+                           calories_goal=calories_goal,
+                           calories_in_last_24_hours=calories_in_last_24_hours)
 
 
 @bp.route('/measurements', methods=('GET', 'POST'))
@@ -234,6 +253,34 @@ def add_water_intake():
 @bp.route('/add_food_intake', methods=('GET', 'POST'))
 @login_required
 def add_food_intake():
+    if request.method == 'POST':
+        food_item_id = request.form['food_item_id']
+        portion_weight = request.form['portion_weight']
+        portions = request.form['portions']
+        error = None
+
+        if not food_item_id or not portion_weight or not portions:
+            error = 'All fields are required'
+        else:
+            try:
+                portion_weight = int(portion_weight)
+                portions = int(portions)
+                if portion_weight < 0 or portions < 0:
+                    error = 'Portion weight and portions must be positive'
+            except ValueError:
+                error = 'Portion weight and portions must be numbers'
+
+        if error is None:
+            db = get_db()
+            db.execute(
+                'INSERT INTO food_intake (user_id, food_item_id, portion_weight, portions) VALUES (?, ?, ?, ?)',
+                (g.user['id'], food_item_id, portion_weight, portions)
+            )
+            db.commit()
+        else:
+            flash(error)
+
+        return redirect(url_for('diary.index'))
 
     return render_template('diary/add_food_intake.html')
 
@@ -252,7 +299,7 @@ def find_food_item():
 
     db = get_db()
     food_items = db.execute(
-        'SELECT name, kcal, protein, fat, carbohydrates, image_url FROM food_items WHERE name LIKE ? LIMIT 25',
+        'SELECT id, name, kcal, protein, fat, carbohydrates, image_url FROM food_items WHERE name LIKE ? LIMIT 25',
         (f'%{query}%',)
     ).fetchall()
 
@@ -265,8 +312,8 @@ def find_food_item():
             'protein': food_item['protein'],
             'fat': food_item['fat'],
             'carbohydrates': food_item['carbohydrates'],
-            'image_url': food_item['image_url'] or url_for('static', filename='icons/no_food_img.svg')
+            'image_url': food_item['image_url'] or url_for('static', filename='icons/no_food_img.svg'),
+            'id': food_item['id']
         })
 
     return result
-    

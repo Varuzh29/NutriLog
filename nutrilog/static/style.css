@@ -9,6 +9,7 @@
     --main-accent-color-active: hsl(100, 100%, 40%);
     --main-accent-color-focus: hsl(100, 100%, 50%, 0.25);
     --water-color: hsl(200, 100%, 75%);
+    --calories-color: hsl(50, 100%, 50%);
     --transition-duration: 0.15s;
     --transition-timing-function: ease-in-out;
     --error-color: #ff8080;
@@ -282,6 +283,10 @@ a:hover {
 
 .bg-color-water {
     background-color: var(--water-color)
+}
+
+.bg-color-calories {
+    background-color: var(--calories-color)
 }
 
 .display-flex {

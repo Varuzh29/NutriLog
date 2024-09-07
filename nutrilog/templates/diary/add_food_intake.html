@@ -41,6 +41,10 @@
         return food_items.json()
     }
 
+    function add_food_item(food_item_id, portion_weight, portions) {
+        console.log(food_item_id, portion_weight, portions)
+    }
+
     function display_food_items(food_items) {
         food_items_container.innerHTML = ""
         for (let food_item of food_items) {
@@ -70,7 +74,22 @@
                                 <td>${ food_item.protein } g</td>
                             </tr>
                         </table>
-                        <button class="btn" onclick="add_food_item(${food_item.id})">Add</button>
+                        <form method="post">
+                            <table>
+                                <tr>
+                                    <td>Portion weight: </td>
+                                    <td><input type="number" name="portion_weight" placeholder="150" required min="1" style="width: 5rem"></td>
+                                    <td>g</td>
+                                </tr>
+                                <tr>
+                                    <td>Portions: </td>
+                                    <td><input type="number" name="portions" placeholder="2" required min="1" style="width: 5rem"></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                            <input type="hidden" name="food_item_id" value="${food_item.id}">
+                            <button class="btn" type="submit">Add</button>
+                        </form>
                     </div>
                 </div>
             `

@@ -13,7 +13,12 @@
         <h2>Calories intake in last 24 hours</h2>
         <label>{{ calories_in_last_24_hours }} / {{ calories_goal }} kcal</label>
         <div class="bar-wrapper">
-            <div class="bar bg-color-calories" style="width: 0"></div>
+            <div class="bar bg-color-calories" id="calories-bar" style="width: 0"></div>
+            <script>
+                setTimeout(() => {
+                    document.getElementById("calories-bar").style.width = "{{ calories_in_last_24_hours / calories_goal * 100 }}%"
+                }, 1)
+            </script>
         </div>
         <a class="btn margin-left-0" href="{{ url_for('diary.add_food_intake') }}">Add food intake</a>
     </div>
