@@ -1,7 +1,6 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, current_app as app, send_from_directory, jsonify
 )
-from werkzeug.exceptions import abort
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from nutrilog.auth import login_required
@@ -9,7 +8,6 @@ from nutrilog.db import get_db
 from nutrilog.modules.bmi_calculator import calculate_bmi
 from nutrilog.modules.img_upload import upload_img
 import os
-from nutrilog.modules.food_item_html import food_items_to_html
 
 bp = Blueprint('diary', __name__)
 
